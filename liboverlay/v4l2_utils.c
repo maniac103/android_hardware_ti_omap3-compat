@@ -33,11 +33,6 @@
 #define V4L2_CID_ROTATE     (V4L2_CID_BASE+34)
 #define V4L2_CID_BG_COLOR   (V4L2_CID_BASE+35)
 #define V4L2_CID_LASTP1     (V4L2_CID_BASE+38)
-
-#elif (V4L2_CID_ROTATE == (V4L2_CID_BASE+32))
-#warning -------------------------------------------------------------
-#warning Please double check the deprecated V4L2_CID_ROTATE(+32) ioctl
-#warning -------------------------------------------------------------
 #endif
 
 #define LOG_FUNCTION_NAME    LOGV("%s: %s",  __FILE__, __FUNCTION__);
@@ -391,14 +386,6 @@ int v4l2_overlay_set_rotation(int fd, int degree, int step)
     ctrl.id = V4L2_CID_ROTATE;
     ctrl.value = degree;
     ret = v4l2_overlay_ioctl(fd, VIDIOC_S_CTRL, &ctrl, "set rotation");
-
-#ifndef USE_CID_ROTATE_34
-    // this ioctl constant is known to be buggy (V4L2_CID_BASE+32 or +34)
-    if (ret < 0 && errno == EINVAL && V4L2_CID_ROTATE == V4L2_CID_BASE+32) {
-        ctrl.id = V4L2_CID_ROTATE+2;
-        ret = v4l2_overlay_ioctl(fd, VIDIOC_S_CTRL, &ctrl, "set rotation");
-    }
-#endif
 
     return ret;
 }
